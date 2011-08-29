@@ -187,7 +187,7 @@
                 }
                 var labelLink = '<span class="graphlabel">' + labelText;
                 if (button) {
-                    labelLink += '<a class="graphlabellink" href="#">' + button + '</a>';
+                    labelLink += '<a class="graphlabellink" style="cursor:pointer;">' + button + '</a>';
                 }
                 labelLink += '</span>';
                 return labelLink;
