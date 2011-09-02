@@ -71,14 +71,12 @@
 
         function findPlotSeries(label) {
             var plotdata = plot.getData();
-            var series = null;
             for (var i = 0; i < plotdata.length; i++) {
                 if (plotdata[i].label == label) {
-                    series = plotdata[i];
-                    break;
+                    return plotdata[i];
                 }
             }
-            return series;
+            return null;
         }
 
         function plotLabelClicked(label, mouseOut) {
