@@ -89,7 +89,7 @@
             var series = findPlotSeries(label);
             if (!series) {
                 return;
-            }
+            }            
             var redraw = false;
             if (series.points.show) {
                 if (series.label.indexOf(labelHide) == -1) {
@@ -148,6 +148,9 @@
                 series.lines.show = true;
                 series.label = series.label.replace(labelHidden, '');
             }
+            // HACK: Reset the data, triggering recalculation of graph bounds
+            plot.setData(plot.getData());
+
             plot.setupGrid();
             plot.draw();
             if (!mouseOut) {
@@ -201,6 +204,14 @@
         }
 
         plot.hooks.processOptions.push(checkOptions);
+
+        function hideDatapointsIfNecessary(plot, s, datapoints) {
+            if (!s.points.show && !s.lines.show) {
+                s.datapoints.format = [ null, null ];
+            }
+        }
+
+        plot.hooks.processDatapoints.push(hideDatapointsIfNecessary);
     }
 
     $.plot.plugins.push({
