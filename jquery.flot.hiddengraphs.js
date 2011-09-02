@@ -68,8 +68,6 @@
 
     function init(plot) {
         var labelHidden = ' [hidden]';
-        var labelHide = ' [hide]';
-        var labelShow = ' [show]';
 
         function findPlotSeries(label) {
             var plotdata = plot.getData();
@@ -83,86 +81,36 @@
             return series;
         }
 
-        function plotLabelMouseOver(label) {
-            // It seems to be relatively easy to miss mouseout events, so we'll make sure other labels aren't
-            // displaying their mouseover text.
-            $(".graphlabel").each(function() { if ($(this).text() != label) plotLabelMouseOut($(this).text()); })
-            var series = findPlotSeries(label);
-            if (!series) {
-                return;
-            }
-            var redraw = false;
-            if (series.points.show) {
-                if (series.label.indexOf(labelHide) == -1) {
-                    series.label += labelHide;
-                    redraw = true;
-                }
-            } else {
-                if (series.label.indexOf(labelShow) == -1) {
-                    series.label = series.label.replace(labelHidden, '') + labelShow;
-                    redraw = true;
-                }
-            }
-
-            if (redraw) {
-                plot.setupGrid();
-                plotLabelHandlers();
-            }
-        }
-
-        function plotLabelMouseOut(label) {
-            var series = findPlotSeries(label);
-            if (!series) {
-                return;
-            }
-            var redraw = false;
-            if (series.points.show) {
-                if (series.label.indexOf(labelHide) >= 0) {
-                    series.label = series.label.replace(labelHide, '');
-                    redraw = true;
-                }
-            } else {
-                if (series.label.indexOf(labelShow) >= 0) {
-                    series.label = series.label.replace(labelShow, '') + labelHidden;
-                    redraw = true;
-                }
-            }
-
-            if (redraw) {
-                plot.setupGrid();
-                plotLabelHandlers();
-            }
-        }
-
         function plotLabelClicked(label, mouseOut) {
             var series = findPlotSeries(label);
             if (!series) {
                 return;
             }
-            plotLabelMouseOut(label);
+
             if (series.points.show) {
                 series.points.show = false;
                 series.lines.show = false;
                 series.label += labelHidden;
+                series.oldColor = series.color;
+                series.color = "#ddd";
             } else {
                 series.points.show = true;
                 series.lines.show = true;
                 series.label = series.label.replace(labelHidden, '');
+                series.color = series.oldColor;
             }
+
             // HACK: Reset the data, triggering recalculation of graph bounds
             plot.setData(plot.getData());
 
             plot.setupGrid();
             plot.draw();
-            if (!mouseOut) {
-                plotLabelMouseOver(series.label);
-            }
         }
 
         function plotLabelHandlers(plot, options) {
-            $(".graphlabel").mouseenter(function() { plotLabelMouseOver($(this).text()); })
-                            .mouseleave(function() { plotLabelMouseOut($(this).text()); });
-            $(".graphlabellink").click(function() { plotLabelClicked($(this).parent().text()); });
+            $(".graphlabel").mouseenter(function() { $(this).css("cursor", "pointer"); })
+                            .mouseleave(function() { $(this).css("cursor", "default"); })
+                            .click(function() { plotLabelClicked($(this).parent().text()); });
             if (!drawnOnce) {
                 drawnOnce = true;
                 if (options.legend.hidden) {
