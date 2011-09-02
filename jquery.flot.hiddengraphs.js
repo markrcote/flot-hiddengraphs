@@ -37,18 +37,18 @@
 
 /*
  * Plugin to hide series in flot graphs.
- * 
+ *
  * To activate, set legend.hideable to true in the flot options object.
  * To hide one or more series by default, set legend.hidden to an array of label strings.
  *
  * At the moment, this only works with line graphs and assumes that points.show and
  * lines.show are both true.
- * 
+ *
  * Example:
- * 
+ *
  *     var plotdata = [{data: [[1, 1], [2, 1], [3, 3], [4, 2], [5, 5]], label: "graph 1"},
  *                     {data: [[1, 0], [2, 1], [3, 0], [4, 4], [5, 3]], label: "graph 2"}];
- *                     
+ *
  *     plot = $.plot($("#placeholder"), plotdata, {
  *        series: {
  *             points: { show: true },
@@ -59,7 +59,7 @@
  *             hidden: ["graph 1", "graph 2"]
  *         }
  *     });
- * 
+ *
  */
 (function ($) {
     var options = { };
@@ -69,7 +69,7 @@
         var labelHidden = ' [hidden]';
         var labelHide = ' [hide]';
         var labelShow = ' [show]';
-      
+
         function findPlotSeries(label) {
             var plotdata = plot.getData();
             var series = null;
@@ -81,7 +81,7 @@
             }
             return series;
         }
-        
+
         function plotLabelMouseOver(label) {
             // It seems to be relatively easy to miss mouseout events, so we'll make sure other labels aren't
             // displaying their mouseover text.
@@ -89,7 +89,7 @@
             var series = findPlotSeries(label);
             if (!series) {
                 return;
-            }            
+            }
             var redraw = false;
             if (series.points.show) {
                 if (series.label.indexOf(labelHide) == -1) {
@@ -102,13 +102,13 @@
                     redraw = true;
                 }
             }
-        
+
             if (redraw) {
                 plot.setupGrid();
                 plotLabelHandlers();
             }
         }
-    
+
         function plotLabelMouseOut(label) {
             var series = findPlotSeries(label);
             if (!series) {
@@ -126,13 +126,13 @@
                     redraw = true;
                 }
             }
-        
+
             if (redraw) {
                 plot.setupGrid();
                 plotLabelHandlers();
             }
         }
-    
+
         function plotLabelClicked(label, mouseOut) {
             var series = findPlotSeries(label);
             if (!series) {
@@ -169,14 +169,14 @@
                         plotLabelClicked(options.legend.hidden[i], true);
                     }
                 }
-            } 
+            }
         }
 
         function checkOptions(plot, options) {
             if (!options.legend.hideable) {
                 return;
             }
-            
+
             options.legend.labelFormatter = function(label, series) {
                 var buttonIdx = label.indexOf('[hide]');
                 if (buttonIdx == -1) {
