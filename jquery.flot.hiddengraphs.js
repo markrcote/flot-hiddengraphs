@@ -8,8 +8,7 @@
  * To activate, set legend.hideable to true in the flot options object.
  * To hide one or more series by default, set legend.hidden to an array of label strings.
  *
- * At the moment, this only works with line graphs and assumes that points.show and
- * lines.show are both true.
+ * At the moment, this only works with line and point graphs
  *
  * Example:
  *
@@ -33,8 +32,6 @@
     var drawnOnce = false;
 
     function init(plot) {
-        var labelHidden = ' [hidden]';
-
         function findPlotSeries(label) {
             var plotdata = plot.getData();
             for (var i = 0; i < plotdata.length; i++) {
@@ -51,21 +48,42 @@
                 return;
             }
 
-            if (series.points.show) {
-                series.points.show = false;
-                series.lines.show = false;
-                series.label += labelHidden;
-                series.oldColor = series.color;
-                series.color = "#ddd";
-            } else {
-                series.points.show = true;
-                series.lines.show = true;
-                series.label = series.label.replace(labelHidden, '');
-                series.color = series.oldColor;
+            var switched_off = false;
+            if (typeof series.points.oldshow === "undefined") {
+                series.points.oldshow = false;
             }
-
-            // HACK: Reset the data, triggering recalculation of graph bounds
-            plot.setData(plot.getData());
+            if (typeof series.lines.oldshow === "undefined") {
+                series.lines.oldshow = false;
+            }
+            if (series.points.show && !series.points.oldshow) {
+                series.points.show = false;
+                series.points.oldshow = true;
+                switched_off = true;
+            }
+            if (series.lines.show && !series.lines.oldshow) {
+                series.lines.show = false;
+                series.lines.oldshow = true;
+                switched_off = true;
+            }
+            if (switched_off) {
+                series.oldColor = series.color;
+                series.color = "#ddd";//grey
+            } else {
+                var switched_on = false;
+                if (!series.points.show && series.points.oldshow) {
+                    series.points.show = true;
+                    series.points.oldshow = false;
+                    switched_on = true;
+                }
+                if (!series.lines.show && series.lines.oldshow) {
+            	    series.lines.show = true;
+                    series.lines.oldshow = false;
+                    switched_on = true;
+                }
+                if (switched_on) {
+            	    series.color = series.oldColor;
+            	}
+            }
 
             plot.setupGrid();
             plot.draw();
@@ -74,7 +92,7 @@
         function plotLabelHandlers(plot, options) {
             $(".graphlabel").mouseenter(function() { $(this).css("cursor", "pointer"); })
                             .mouseleave(function() { $(this).css("cursor", "default"); })
-                            .click(function() { plotLabelClicked($(this).parent().text()); });
+                            .unbind("click").click(function() { plotLabelClicked($(this).parent().text()); });
             if (!drawnOnce) {
                 drawnOnce = true;
                 if (options.legend.hidden) {
@@ -90,7 +108,7 @@
                 return;
             }
 
-            options.legend.labelFormatter = function(label, series) {
+            options.legend.labelFormatter = function(label, series, mylabel) {
                 var buttonIdx = label.indexOf('[hide]');
                 if (buttonIdx == -1) {
                     buttonIdx = label.indexOf('[show]');
@@ -101,7 +119,11 @@
                     labelText = label.slice(0, buttonIdx);
                     button = label.slice(buttonIdx);
                 }
-                var labelLink = '<span class="graphlabel">' + labelText;
+								if (series.longlabel) {
+	                var labelLink = '<span title="' + series.longlabel + '" class="graphlabel">' + labelText;
+								} else {
+	                var labelLink = '<span class="graphlabel">' + labelText;
+								}
                 if (button) {
                     labelLink += '<a class="graphlabellink" style="cursor:pointer;">' + button + '</a>';
                 }
