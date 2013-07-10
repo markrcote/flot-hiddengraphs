@@ -48,42 +48,42 @@
                 return;
             }
 
-    					var switched_off = false;
-						if (typeof series.points.oldshow === "undefined") {
-							series.points.oldshow = false;
-						}
-						if (typeof series.lines.oldshow === "undefined") {
-							series.lines.oldshow = false;
-						}
+            var switched_off = false;
+            if (typeof series.points.oldshow === "undefined") {
+                series.points.oldshow = false;
+            }
+            if (typeof series.lines.oldshow === "undefined") {
+                series.lines.oldshow = false;
+            }
             if (series.points.show && !series.points.oldshow) {
                 series.points.show = false;
-								series.points.oldshow = true;
-								switched_off = true;
-						}
+                series.points.oldshow = true;
+                switched_off = true;
+            }
             if (series.lines.show && !series.lines.oldshow) {
                 series.lines.show = false;
-								series.lines.oldshow = true;
-								switched_off = true;
-						}
-						if (switched_off) {
-								series.oldColor = series.color;
+                series.lines.oldshow = true;
+                switched_off = true;
+            }
+            if (switched_off) {
+                series.oldColor = series.color;
                 series.color = "#ddd";//grey
-						} else {
-							var switched_on = false;
-            	if (!series.points.show && series.points.oldshow) {
-            	    series.points.show = true;
-									series.points.oldshow = false;
-									switched_on = true;
-							}
-            	if (!series.lines.show && series.lines.oldshow) {
+            } else {
+                var switched_on = false;
+                if (!series.points.show && series.points.oldshow) {
+                    series.points.show = true;
+                    series.points.oldshow = false;
+                    switched_on = true;
+                }
+                if (!series.lines.show && series.lines.oldshow) {
             	    series.lines.show = true;
-									series.lines.oldshow = false;
-									switched_on = true;
-							}
-							if (switched_on) {
+                    series.lines.oldshow = false;
+                    switched_on = true;
+                }
+                if (switched_on) {
             	    series.color = series.oldColor;
             	}
-						}
+            }
 
             plot.setupGrid();
             plot.draw();
