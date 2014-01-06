@@ -5,8 +5,7 @@ To activate, set legend.hideable to true in the flot options object.
 To hide one or more series by default, set legend.hidden to an array of
 label strings.
 
-At the moment, this only works with line graphs and assumes that
-points.show and lines.show are both true.
+At the moment, this only works with line and point graphs.
 
 Example:
 
