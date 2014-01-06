@@ -135,6 +135,10 @@
         plot.hooks.processOptions.push(checkOptions);
 
         function hideDatapointsIfNecessary(plot, s, datapoints) {
+            if (!plot.getOptions().legend.hideable) {
+                return;
+            }
+
             if (!s.points.show && !s.lines.show) {
                 s.datapoints.format = [ null, null ];
             }
