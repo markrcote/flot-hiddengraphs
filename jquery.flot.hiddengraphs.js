@@ -8,7 +8,7 @@
  * To activate, set legend.hideable to true in the flot options object.
  * To hide one or more series by default, set legend.hidden to an array of label strings.
  *
- * At the moment, this only works with line and point graphs
+ * At the moment, this only works with line and point graphs.
  *
  * Example:
  *
@@ -48,42 +48,45 @@
                 return;
             }
 
-            var switched_off = false;
-            if (typeof series.points.oldshow === "undefined") {
-                series.points.oldshow = false;
+            var switchedOff = false;
+            if (typeof series.points.oldShow === "undefined") {
+                series.points.oldShow = false;
             }
-            if (typeof series.lines.oldshow === "undefined") {
-                series.lines.oldshow = false;
+            if (typeof series.lines.oldShow === "undefined") {
+                series.lines.oldShow = false;
             }
-            if (series.points.show && !series.points.oldshow) {
+            if (series.points.show && !series.points.oldShow) {
                 series.points.show = false;
-                series.points.oldshow = true;
-                switched_off = true;
+                series.points.oldShow = true;
+                switchedOff = true;
             }
-            if (series.lines.show && !series.lines.oldshow) {
+            if (series.lines.show && !series.lines.oldShow) {
                 series.lines.show = false;
-                series.lines.oldshow = true;
-                switched_off = true;
+                series.lines.oldShow = true;
+                switchedOff = true;
             }
-            if (switched_off) {
+            if (switchedOff) {
                 series.oldColor = series.color;
                 series.color = "#ddd";//grey
             } else {
-                var switched_on = false;
-                if (!series.points.show && series.points.oldshow) {
+                var switchedOn = false;
+                if (!series.points.show && series.points.oldShow) {
                     series.points.show = true;
-                    series.points.oldshow = false;
-                    switched_on = true;
+                    series.points.oldShow = false;
+                    switchedOn = true;
                 }
-                if (!series.lines.show && series.lines.oldshow) {
+                if (!series.lines.show && series.lines.oldShow) {
             	    series.lines.show = true;
-                    series.lines.oldshow = false;
-                    switched_on = true;
+                    series.lines.oldShow = false;
+                    switchedOn = true;
                 }
-                if (switched_on) {
+                if (switchedOn) {
             	    series.color = series.oldColor;
             	}
             }
+
+            // HACK: Reset the data, triggering recalculation of graph bounds
+            plot.setData(plot.getData());
 
             plot.setupGrid();
             plot.draw();
@@ -108,7 +111,7 @@
                 return;
             }
 
-            options.legend.labelFormatter = function(label, series, mylabel) {
+            options.legend.labelFormatter = function(label, series) {
                 var buttonIdx = label.indexOf('[hide]');
                 if (buttonIdx == -1) {
                     buttonIdx = label.indexOf('[show]');
@@ -119,11 +122,7 @@
                     labelText = label.slice(0, buttonIdx);
                     button = label.slice(buttonIdx);
                 }
-								if (series.longlabel) {
-	                var labelLink = '<span title="' + series.longlabel + '" class="graphlabel">' + labelText;
-								} else {
-	                var labelLink = '<span class="graphlabel">' + labelText;
-								}
+                var labelLink = '<span class="graphlabel">' + labelText;
                 if (button) {
                     labelLink += '<a class="graphlabellink" style="cursor:pointer;">' + button + '</a>';
                 }
