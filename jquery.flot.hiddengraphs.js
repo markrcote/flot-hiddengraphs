@@ -6,14 +6,23 @@
  * Plugin to hide series in flot graphs.
  *
  * To activate, set legend.hideable to true in the flot options object.
- * To hide one or more series by default, set legend.hidden to an array of label strings.
+ * To hide one or more series by default, set legend.hidden to an array of
+ * label strings.
  *
  * At the moment, this only works with line and point graphs.
  *
  * Example:
  *
- *     var plotdata = [{data: [[1, 1], [2, 1], [3, 3], [4, 2], [5, 5]], label: "graph 1"},
- *                     {data: [[1, 0], [2, 1], [3, 0], [4, 4], [5, 3]], label: "graph 2"}];
+ *     var plotdata = [
+ *         {
+ *             data: [[1, 1], [2, 1], [3, 3], [4, 2], [5, 5]],
+ *             label: "graph 1"
+ *         },
+ *         {
+ *             data: [[1, 0], [2, 1], [3, 0], [4, 4], [5, 3]],
+ *             label: "graph 2"
+ *         }
+ *     ];
  *
  *     plot = $.plot($("#placeholder"), plotdata, {
  *        series: {
@@ -112,26 +121,12 @@
             }
 
             options.legend.labelFormatter = function(label, series) {
-                var buttonIdx = label.indexOf('[hide]');
-                if (buttonIdx == -1) {
-                    buttonIdx = label.indexOf('[show]');
-                }
-                var button = '';
-                var labelText = label;
-                if (buttonIdx > -1) {
-                    labelText = label.slice(0, buttonIdx);
-                    button = label.slice(buttonIdx);
-                }
-                var labelLink = '<span class="graphlabel">' + labelText;
-                if (button) {
-                    labelLink += '<a class="graphlabellink" style="cursor:pointer;">' + button + '</a>';
-                }
-                labelLink += '</span>';
-                return labelLink;
+                return '<span class="graphlabel">' + label + '</span>';
             };
 
-            // Really just needed for initial draw; the mouse-enter/leave functions will
-            // call plotLabelHandlers() directly, since they only call setupGrid().
+            // Really just needed for initial draw; the mouse-enter/leave
+            // functions will call plotLabelHandlers() directly, since they
+            // only call setupGrid().
             plot.hooks.draw.push(function (plot, ctx) {
                 plotLabelHandlers(plot, options);
             });
