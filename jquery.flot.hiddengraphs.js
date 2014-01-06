@@ -67,7 +67,7 @@
             }
             if (switchedOff) {
                 series.oldColor = series.color;
-                series.color = "#ddd";//grey
+                series.color = "#fff";
             } else {
                 var switchedOn = false;
                 if (!series.points.show && series.points.oldShow) {
