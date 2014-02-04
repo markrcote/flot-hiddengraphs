@@ -41,6 +41,7 @@
     var drawnOnce = false;
 
     function init(plot) {
+    	
         function findPlotSeries(label) {
             var plotdata = plot.getData();
             for (var i = 0; i < plotdata.length; i++) {
@@ -57,6 +58,8 @@
                 return;
             }
 
+            var options = plot.getOptions();
+            
             var switchedOff = false;
             if (typeof series.points.oldShow === "undefined") {
                 series.points.oldShow = false;
@@ -77,6 +80,7 @@
             if (switchedOff) {
                 series.oldColor = series.color;
                 series.color = "#fff";
+                setHidden(plot, options, label, true);
             } else {
                 var switchedOn = false;
                 if (!series.points.show && series.points.oldShow) {
@@ -91,6 +95,7 @@
                 }
                 if (switchedOn) {
             	    series.color = series.oldColor;
+                	setHidden(plot, options, label, false);
             	}
             }
 
@@ -101,10 +106,31 @@
             plot.draw();
         }
 
+        function setHidden(plot, options, label, hide){
+        	if (!options.legend.hidden) {
+        		options.legend.hidden = [];
+        	}
+        	var pos = options.legend.hidden.indexOf(label);
+        	if (hide){
+        		if (pos < 0){
+        			options.legend.hidden.push(label);
+        		}
+        	}
+        	else{
+        		if (pos > -1)
+        			options.legend.hidden.splice(pos, 1);
+        	}
+        		
+        }
         function plotLabelHandlers(plot, options) {
+        	options = plot.getOptions();
+            if (!options.legend.hideable) {
+                return;
+            }
             $(".graphlabel").mouseenter(function() { $(this).css("cursor", "pointer"); })
-                            .mouseleave(function() { $(this).css("cursor", "default"); })
-                            .unbind("click").click(function() { plotLabelClicked($(this).parent().text()); });
+            .mouseleave(function() { $(this).css("cursor", "default"); })
+            .unbind("click").click(function() { plotLabelClicked($(this).parent().text()); });
+
             if (!drawnOnce) {
                 drawnOnce = true;
                 if (options.legend.hidden) {
@@ -124,27 +150,45 @@
                 return '<span class="graphlabel">' + label + '</span>';
             };
 
-            // Really just needed for initial draw; the mouse-enter/leave
-            // functions will call plotLabelHandlers() directly, since they
-            // only call setupGrid().
-            plot.hooks.draw.push(function (plot, ctx) {
-                plotLabelHandlers(plot, options);
-            });
         }
 
         plot.hooks.processOptions.push(checkOptions);
 
+        plot.hooks.draw.push(function (plot, ctx) {
+            plotLabelHandlers(plot, options);
+        });
+
         function hideDatapointsIfNecessary(plot, s, datapoints) {
-            if (!plot.getOptions().legend.hideable) {
+        	var options = plot.getOptions();
+            if (!options.legend.hideable) {
                 return;
             }
-
+            if (options.legend.hidden) {
+            	if (options.legend.hidden.indexOf(s.label) > -1){
+            		var off = false;
+            		if (s.points.show){
+                		s.points.show = false;
+                		s.points.oldShow = true;
+                		off = true;
+            		}
+            		if (s.lines.show){
+                		s.lines.show = false;
+                		s.lines.oldShow = true;
+                		off = true;
+            		}
+            		if (off){
+            			s.oldColor = s.color;
+                        s.color = "#fff";
+            		}
+            	}
+            }
             if (!s.points.show && !s.lines.show) {
                 s.datapoints.format = [ null, null ];
             }
         }
 
         plot.hooks.processDatapoints.push(hideDatapointsIfNecessary);
+        
     }
 
     $.plot.plugins.push({
