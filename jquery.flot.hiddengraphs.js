@@ -38,9 +38,9 @@
  */
 (function ($) {
     var options = { };
-    var drawnOnce = false;
 
     function init(plot) {
+        var drawnOnce = false;
     	
         function findPlotSeries(label) {
             var plotdata = plot.getData();
@@ -127,7 +127,9 @@
             if (!options.legend.hideable) {
                 return;
             }
-            $(".graphlabel").mouseenter(function() { $(this).css("cursor", "pointer"); })
+            // look for the label under the current plot to support multiple graphs
+            var p = plot.getPlaceholder();
+            p.find(".graphlabel").mouseenter(function() { $(this).css("cursor", "pointer"); })
             .mouseleave(function() { $(this).css("cursor", "default"); })
             .unbind("click").click(function() { plotLabelClicked($(this).parent().text()); });
 
