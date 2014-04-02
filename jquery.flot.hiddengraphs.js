@@ -105,6 +105,9 @@
             $(".graphlabel").mouseenter(function() { $(this).css("cursor", "pointer"); })
                             .mouseleave(function() { $(this).css("cursor", "default"); })
                             .unbind("click").click(function() { plotLabelClicked($(this).parent().text()); });
+	    $(".legendColorBox").mouseenter(function() { $(this).css("cursor", "pointer"); })
+		    		.mouseleave(function() { $(this).css("cursor", "default"); })
+				.unbind("click").click(function() { plotLabelClicked($(this).parent().text()); });
             if (!drawnOnce) {
                 drawnOnce = true;
                 if (options.legend.hidden) {
