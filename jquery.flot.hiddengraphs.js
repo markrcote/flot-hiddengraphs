@@ -133,7 +133,11 @@
             elem.mouseenter(function() { $(this).css("cursor", "pointer"); })
                 .mouseleave(function() { $(this).css("cursor", "default"); })
                 .unbind("click").click(function() {
-                    plotLabelClicked($(this).parent().text());
+                    if ($(this).is(".legendColorBox")) {
+                        plotLabelClicked($(this).next('.legendLabel').text());
+                    } else {
+                        plotLabelClicked($(this).parent().text());
+                    }
                 });
         }
 
