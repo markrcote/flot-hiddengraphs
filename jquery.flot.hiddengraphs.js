@@ -103,11 +103,21 @@
             	}
             }
 
-            // HACK: Reset the data, triggering recalculation of graph bounds
-            plot.setData(plot.getData());
-
-            plot.setupGrid();
-            plot.draw();
+            // HACK: Reset the data, triggering recalculation of graph bounds                      
+            drawDeffered(series);            
+        }
+        
+        function drawDeffered(series) {            
+            if(drawTimeout) {
+                return;
+            }
+            drawTimeout = setTimeout(function() {
+                onHide(series, plot);
+                plot.setData(plot.getData());
+                plot.setupGrid();
+                plot.draw();
+                drawTimeout = 0;
+            }, 0);
         }
 
         function setHidden(options, label, hide) {
