@@ -104,15 +104,14 @@
             }
 
             // HACK: Reset the data, triggering recalculation of graph bounds                      
-            drawDeffered(series);            
+            drawDeffered();            
         }
         
-        function drawDeffered(series) {            
+        function drawDeffered() {            
             if(drawTimeout) {
                 return;
             }
             drawTimeout = setTimeout(function() {
-                onHide(series, plot);
                 plot.setData(plot.getData());
                 plot.setupGrid();
                 plot.draw();
