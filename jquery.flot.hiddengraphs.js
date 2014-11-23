@@ -102,7 +102,9 @@
                     setHidden(options, label, false);
             	}
             }
+        }
 
+        function setSetupRedraw () {
             // HACK: Reset the data, triggering recalculation of graph bounds
             plot.setData(plot.getData());
 
@@ -133,7 +135,12 @@
             elem.mouseenter(function() { $(this).css("cursor", "pointer"); })
                 .mouseleave(function() { $(this).css("cursor", "default"); })
                 .unbind("click").click(function() {
-                    plotLabelClicked($(this).parent().text());
+                    if ($(this).is(".legendColorBox")) {
+                        plotLabelClicked($(this).next('.legendLabel').text());
+                    } else {
+                        plotLabelClicked($(this).parent().text());
+                    }
+                    setSetupRedraw();
                 });
         }
 
@@ -155,6 +162,7 @@
                     for (var i = 0; i < options.legend.hidden.length; i++) {
                         plotLabelClicked(options.legend.hidden[i], true);
                     }
+                    setSetupRedraw();
                 }
             }
         }
