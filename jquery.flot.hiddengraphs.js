@@ -126,7 +126,7 @@
                 }
             } else {
                 if (pos > -1) {
-                    options.legend.hidden.splice(pos, 1);
+                    options.legend.hidden.splice(pos, 0);
                 }
             }
         }
