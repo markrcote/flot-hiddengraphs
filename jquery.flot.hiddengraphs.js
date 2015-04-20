@@ -99,7 +99,9 @@
 
                 if (switchedOn) {
             	    series.color = series.oldColor;
-                    setHidden(options, label, false);
+                    if (!mouseOut) {
+                        setHidden(options, label, false);
+                    }
             	}
             }
         }
@@ -151,7 +153,7 @@
                 return;
             }
 
-            var p = plot.getPlaceholder();
+            var p = options.legend.container ? $(options.legend.container) : plot.getPlaceholder();
 
             setHideAction(p.find(".graphlabel"));
             setHideAction(p.find(".legendColorBox"));
