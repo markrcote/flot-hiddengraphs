@@ -136,9 +136,9 @@
                 .mouseleave(function() { $(this).css("cursor", "default"); })
                 .unbind("click").click(function() {
                     if ($(this).is(".legendColorBox")) {
-                        plotLabelClicked($(this).next('.legendLabel').text());
+                        plotLabelClicked($(this).parent().find('.legendLabel span').attr("data-label"));
                     } else {
-                        plotLabelClicked($(this).parent().text());
+                        plotLabelClicked($(this).attr("data-label"));
                     }
                     setSetupRedraw();
                 });
@@ -172,8 +172,13 @@
                 return;
             }
 
+            options.legend.oldlf = options.legend.labelFormatter;   // kevin@joinitup.co.uk added: store user label formatter
             options.legend.labelFormatter = function(label, series) {
-                return '<span class="graphlabel">' + label + '</span>';
+                var new_label = label
+                if(options.legend.oldlf ) {                         // kevin@joinitup.co.uk added : call user label formatter
+                    new_label = options.legend.oldlf (label, series);
+                }
+                return '<span class="graphlabel" data-label="' + label + '">' + new_label + '</span>';  // kevin@joinitup.co.uk changed: use data-label attribute
             };
         }
 
