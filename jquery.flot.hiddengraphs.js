@@ -151,10 +151,15 @@
                 return;
             }
 
-            var p = plot.getPlaceholder();
-
+            if ((typeof options.legend.container === 'object') && (options.legend.container !== null)) {
+                var p = $(options.legend.container);
+            }
+            else {
+                var p = plot.getPlaceholder();
+            }
             setHideAction(p.find(".graphlabel"));
             setHideAction(p.find(".legendColorBox"));
+
 
             if (!drawnOnce) {
                 drawnOnce = true;
